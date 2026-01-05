@@ -41,12 +41,25 @@ flutter run
 📂 Dosya Yapısı
 ```
 lib/
-├── main.dart           # Uygulama giriş noktası
-├── models/             # Veri modelleri (User, Session, Post)
-├── services/           # Firebase işlemleri (Auth, DB)
-├── screens/            # Uygulama ekranları
-│   ├── auth/           # Giriş ve Kayıt ekranları
-│   ├── home/           # Ana sayfa, Sayaç, İstatistik, Topluluk
-│   └── profile_screen.dart
-└── widgets/            # Ortak kullanılan bileşenler
+
+├── main.dart # Uygulama giriş noktası
+├── models/ # Veri modelleri
+│ ├── post_model.dart
+│ ├── session_model.dart
+│ └── user_model.dart
+├── screens/ # Uygulama ekranları
+│ ├── auth/
+│ │ ├── login_screen.dart
+│ │ └── register_screen.dart
+│ ├── home/
+│ │ ├── community_screen.dart
+│ │ ├── dashboard_screen.dart
+│ │ ├── stats_screen.dart
+│ │ └── timer_screen.dart
+│ └── profile_screen.dart
+├── services/ # Firebase işlemleri
+│ ├── auth_service.dart
+│ └── db_service.dart
+├── widgets/ # Tekrar kullanılan bileşenler
+│ ├── custom_button.dart
 ```
