@@ -29,13 +29,7 @@ Projenin ihtiyaç duyduğu paketleri indirmek için proje dizininde şu komutu �
 ```
 flutter pub get
 ```
-4. Çalıştırın
-```
-flutter run
-```
-Yazdıktan sonra normalde kullandığınız emülatörü seçebilirsiniz.
-
-5. Uygulamayı Çalıştırın
+4. Uygulamayı Çalıştırın
 
 Emülatörünüzü veya fiziksel cihazınızı bağladıktan sonra aşağıdaki komutla uygulamayı başlatın:
 
