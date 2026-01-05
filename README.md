@@ -61,14 +61,14 @@ flutter run
 📂 Dosya Yapısı
 
 lib/
-├── main.dart             # Uygulama giriş noktası
-├── models/               # Veri modelleri (User, Session, Post)
-├── services/             # Firebase işlemleri (Auth, DB)
-├── screens/              # Uygulama ekranları
-│   ├── auth/             # Giriş ve Kayıt
-│   ├── home/             # Ana sayfa, Sayaç, İstatistik, Topluluk
+├── main.dart           # Uygulama giriş noktası
+├── models/             # Veri modelleri (User, Session, Post)
+├── services/           # Firebase işlemleri (Auth, DB)
+├── screens/            # Uygulama ekranları
+│   ├── auth/           # Giriş ve Kayıt ekranları
+│   ├── home/           # Ana sayfa, Sayaç, İstatistik, Topluluk
 │   └── profile_screen.dart
-└── widgets/              # Ortak bileşenler
+└── widgets/            # Ortak kullanılan bileşenler
 
 
 ⚠️ Karşılaşılabilecek Sorunlar ve Çözümleri
