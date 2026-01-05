@@ -18,11 +18,8 @@ Android Emülatör veya Fiziksel Cihaz
 
 Terminali açın ve projeyi bilgisayarınıza indirin:
 
-git clone <GITHUB_REPO_LINKI>
+git clone flutter_study_track_furkan_kucuk
 cd studytrack
-
-
-(Not: <GITHUB_REPO_LINKI> yerine kendi repo adresinizi yazın veya dosyaları zip'ten çıkardıysanız o klasöre gidin.)
 
 3. Bağımlılıkları Yükleyin
 
