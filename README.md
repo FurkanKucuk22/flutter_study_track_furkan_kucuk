@@ -19,7 +19,7 @@ Terminali açın ve projeyi bilgisayarınıza indirin:
 
 ```
 git clone https://github.com/FurkanKucuk22/flutter_study_track_furkan_kucuk.git
-cd studytrack
+cd flutter_study_track_furkan_kucu
 ```
 
 3. Bağımlılıkları Yükleyin
