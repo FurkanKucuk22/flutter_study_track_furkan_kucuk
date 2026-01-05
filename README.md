@@ -18,7 +18,7 @@ Android Emülatör veya Fiziksel Cihaz
 Terminali açın ve projeyi bilgisayarınıza indirin:
 
 ```
-git clone flutter_study_track_furkan_kucuk
+git clone https://github.com/FurkanKucuk22/flutter_study_track_furkan_kucuk.git
 cd studytrack
 ```
 
