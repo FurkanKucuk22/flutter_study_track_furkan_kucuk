@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../services/db_service.dart';
 import '../widgets/custom_button.dart';
-import '../models/user_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -17,16 +17,13 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _nameController = TextEditingController();
-  final _goalController = TextEditingController();
+  final _departmentController = TextEditingController(); // EKLENDİ
+  final _gradeController = TextEditingController();      // EKLENDİ
 
   bool _isLoading = false;
-  // Bu değişken sayesinde veriyi sadece BİR KERE çekeceğiz
-  bool _isDataInitialized = false;
 
-  // Fotoğraf Seçme ve Yükleme İşlemi
   Future<void> _pickAndUploadImage(String userId, DBService dbService) async {
     final ImagePicker picker = ImagePicker();
-    // imageQuality: 20 -> Resim boyutunu küçültüyoruz ki veritabanı şişmesin
     final XFile? image = await picker.pickImage(source: ImageSource.gallery, imageQuality: 20);
 
     if (image != null) {
@@ -41,31 +38,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  // Bilgileri Kaydetme İşlemi
   void _saveProfile(String userId, DBService dbService) async {
-    // Boş alan kontrolü
-    if (_nameController.text.isEmpty && _goalController.text.isEmpty) return;
+    if (_nameController.text.isEmpty) return;
 
     setState(() => _isLoading = true);
 
-    // Hedefi güncelle
-    if (_goalController.text.isNotEmpty) {
-      await dbService.setGoal(userId, int.parse(_goalController.text));
-    }
-
-    // Profil bilgilerini güncelle (Sadece isim)
     await dbService.updateUserProfile(
         userId,
-        _nameController.text
+        _nameController.text,
+        _departmentController.text, // Bölüm kaydediliyor
+        _gradeController.text       // Sınıf kaydediliyor
     );
 
     if (!mounted) return;
     setState(() => _isLoading = false);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Bilgiler Kaydedildi!")));
-    FocusScope.of(context).unfocus(); // Klavyeyi kapat
+    FocusScope.of(context).unfocus();
   }
 
-  // Base64 metnini resme çeviren yardımcı fonksiyon
   ImageProvider _getImageProvider(String? photoData) {
     if (photoData == null || photoData.isEmpty) {
       return const AssetImage('assets/placeholder.png');
@@ -98,21 +88,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           UserModel userData = snapshot.data!;
           bool hasPhoto = userData.photoUrl != null && userData.photoUrl!.isNotEmpty;
 
-          // --- KLAVYE SORUNU ÇÖZÜMÜ ---
-          // Verileri sadece sayfa ilk yüklendiğinde (henüz doldurulmadıysa) controller'a atıyoruz.
-          // Böylece siz yazı yazarken Flutter tekrar tekrar veritabanındaki eski ismi kutucuğa yazmaya çalışmıyor.
-          if (!_isDataInitialized) {
-            _nameController.text = userData.name;
-            // Eğer veritabanında hedef bilgisi varsa onu da burada doldurabilirsiniz
-            _isDataInitialized = true; // Artık veriler yüklendi, bir daha dokunma.
-          }
-          // ----------------------------
-
           return SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               children: [
-                // --- PROFİL FOTOĞRAFI ALANI ---
                 Center(
                   child: Stack(
                     children: [
@@ -143,7 +122,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
 
                 const SizedBox(height: 16),
-                // İsim veritabanından geliyorsa göster
                 Text(
                     userData.name.isNotEmpty ? userData.name : "İsimsiz Kullanıcı",
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)
@@ -155,31 +133,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const Text("Bilgileri Düzenle", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.indigo)),
                 const SizedBox(height: 20),
 
-                // Form Alanları
-
-                // 1. Ad Soyad Alanı
+                // Ad Soyad
                 TextField(
-                  // ARTIK BURADA "..text =" ATAMASI YOK!
-                  // Sadece controller'ı veriyoruz. Veriyi yukarıdaki if bloğunda doldurduk.
-                  controller: _nameController,
+                  controller: _nameController..text = (_nameController.text.isEmpty ? userData.name : _nameController.text),
                   textCapitalization: TextCapitalization.words,
                   keyboardType: TextInputType.name,
                   decoration: const InputDecoration(labelText: "Ad Soyad", prefixIcon: Icon(Icons.person)),
                 ),
                 const SizedBox(height: 16),
 
-                // 2. Hedef Alanı
+                // Bölüm (EKLENDİ)
                 TextField(
-                  controller: _goalController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: "Günlük Hedef (dk)", prefixIcon: Icon(Icons.timer)),
+                  controller: _departmentController..text = (_departmentController.text.isEmpty ? (userData.department ?? '') : _departmentController.text),
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: const InputDecoration(labelText: "Bölüm", prefixIcon: Icon(Icons.school)),
+                ),
+                const SizedBox(height: 16),
+
+                // Sınıf (EKLENDİ)
+                TextField(
+                  controller: _gradeController..text = (_gradeController.text.isEmpty ? (userData.grade ?? '') : _gradeController.text),
+                  decoration: const InputDecoration(labelText: "Sınıf", prefixIcon: Icon(Icons.class_outlined)),
                 ),
 
                 const SizedBox(height: 24),
                 CustomButton(text: "KAYDET", onPressed: () => _saveProfile(user.uid, dbService), isLoading: _isLoading),
 
                 const SizedBox(height: 40),
-                // Çıkış Butonu
+
+                // Oturumu Kapat (logout) - Gereksinim
                 TextButton.icon(
                   onPressed: () => authService.signOut(),
                   icon: const Icon(Icons.logout, color: Colors.red),

@@ -20,13 +20,16 @@ class DBService {
     });
   }
 
-  Future<void> updateUserProfile(String userId, String name) async {
+  // GÜNCELLEME: Bölüm ve Sınıf parametreleri geri eklendi
+  Future<void> updateUserProfile(String userId, String name, String department, String grade) async {
     await _db.collection('users').doc(userId).set({
       'name': name,
+      'department': department,
+      'grade': grade,
     }, SetOptions(merge: true));
   }
 
-  // --- FOTOĞRAF YÜKLEME ---
+  // --- FOTOĞRAF YÜKLEME (Base64) ---
   Future<void> uploadProfilePhoto(String userId, File imageFile) async {
     try {
       List<int> imageBytes = await imageFile.readAsBytes();
@@ -65,7 +68,6 @@ class DBService {
         .snapshots()
         .map((snapshot) {
       var sessions = snapshot.docs.map((doc) => StudySession.fromFirestore(doc)).toList();
-
       DateTime now = DateTime.now();
       int daysToSubtract = now.weekday - 1;
       DateTime monday = now.subtract(Duration(days: daysToSubtract));
@@ -80,18 +82,30 @@ class DBService {
   }
 
   // --- HEDEFLER ---
-  Future<void> setGoal(String userId, int minutes) async {
+  Future<void> saveGoals(String userId, int dailyGoal, int weeklyGoal, Map<String, int> subjectGoals) async {
     await _db.collection('goals').doc(userId).set({
-      'dailyGoal': minutes,
+      'dailyGoal': dailyGoal,
+      'weeklyGoal': weeklyGoal,
+      'subjectGoals': subjectGoals,
+      'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
 
-  Stream<int> getUserGoal(String userId) {
+  Stream<Map<String, dynamic>> getUserGoals(String userId) {
     return _db.collection('goals').doc(userId).snapshots().map((doc) {
-      if (doc.exists && doc.data()!.containsKey('dailyGoal')) {
-        return doc.data()!['dailyGoal'] as int;
+      if (doc.exists && doc.data() != null) {
+        var data = doc.data()!;
+        return {
+          'daily': data['dailyGoal'] ?? 60,
+          'weekly': data['weeklyGoal'] ?? 300,
+          'subjectGoals': Map<String, int>.from(data['subjectGoals'] ?? {}),
+        };
       }
-      return 60;
+      return {
+        'daily': 60,
+        'weekly': 300,
+        'subjectGoals': <String, int>{}
+      };
     });
   }
 
@@ -117,58 +131,47 @@ class DBService {
         'message': message,
         'imageUrl': base64Image,
         'createdAt': FieldValue.serverTimestamp(),
-        'likes': 0, // Başlangıçta 0 beğeni
-        'likedBy': [], // Beğenenler boş
-        'comments': [], // Yorumlar boş
+        'likes': 0,
+        'likedBy': [],
+        'comments': [],
       });
     } catch (e) {
       print("Post atma hatası: $e");
     }
   }
 
-  // Beğeni Yap / Geri Al
   Future<void> toggleLike(String postId, String userId) async {
     DocumentReference postRef = _db.collection('posts').doc(postId);
-
-    // İşlem tutarlılığı için transaction kullanıyoruz
     await _db.runTransaction((transaction) async {
       DocumentSnapshot snapshot = await transaction.get(postRef);
       if (!snapshot.exists) return;
-
       Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
       List<String> likedBy = List<String>.from(data['likedBy'] ?? []);
       int likes = data['likes'] ?? 0;
 
       if (likedBy.contains(userId)) {
-        // Zaten beğenmiş -> Beğeniyi kaldır
         likedBy.remove(userId);
         likes -= 1;
       } else {
-        // Beğenmemiş -> Beğeni ekle
         likedBy.add(userId);
         likes += 1;
       }
-
       transaction.update(postRef, {'likes': likes, 'likedBy': likedBy});
     });
   }
 
-  // Yorum Ekle
   Future<void> addComment(String postId, String userId, String message) async {
-    // Yorum yapanın ismini bul
     DocumentSnapshot userDoc = await _db.collection('users').doc(userId).get();
     String userName = "Anonim";
     if (userDoc.exists && userDoc.data() != null) {
       userName = (userDoc.data() as Map<String, dynamic>)['name'] ?? "Anonim";
     }
-
     Map<String, dynamic> commentData = {
       'userId': userId,
       'userName': userName,
       'message': message,
       'createdAt': Timestamp.now(),
     };
-
     await _db.collection('posts').doc(postId).update({
       'comments': FieldValue.arrayUnion([commentData])
     });

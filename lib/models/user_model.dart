@@ -1,12 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class UserModel {
   final String uid;
   final String email;
   final String name;
   final String? photoUrl;
+  final String? department; // EKLENDİ
+  final String? grade;      // EKLENDİ
 
-  UserModel({required this.uid, required this.email, required this.name, this.photoUrl});
+  UserModel({
+    required this.uid,
+    required this.email,
+    required this.name,
+    this.photoUrl,
+    this.department,
+    this.grade,
+  });
 
   factory UserModel.fromMap(Map<String, dynamic> data) {
     return UserModel(
@@ -14,6 +21,8 @@ class UserModel {
       email: data['email'] ?? '',
       name: data['name'] ?? '',
       photoUrl: data['photoUrl'],
+      department: data['department'],
+      grade: data['grade'],
     );
   }
 
@@ -23,6 +32,8 @@ class UserModel {
       'email': email,
       'name': name,
       'photoUrl': photoUrl,
+      'department': department,
+      'grade': grade,
     };
   }
 }
