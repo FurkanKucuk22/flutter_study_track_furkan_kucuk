@@ -59,7 +59,7 @@ flutter run
 
 
 📂 Dosya Yapısı
-
+```
 lib/
 ├── main.dart           # Uygulama giriş noktası
 ├── models/             # Veri modelleri (User, Session, Post)
@@ -69,7 +69,7 @@ lib/
 │   ├── home/           # Ana sayfa, Sayaç, İstatistik, Topluluk
 │   └── profile_screen.dart
 └── widgets/            # Ortak kullanılan bileşenler
-
+```
 
 ⚠️ Karşılaşılabilecek Sorunlar ve Çözümleri
 
