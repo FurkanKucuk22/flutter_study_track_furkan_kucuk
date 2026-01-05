@@ -29,8 +29,14 @@ Projenin ihtiyaç duyduğu paketleri indirmek için proje dizininde şu komutu �
 ```
 flutter pub get
 ```
+4. Çalıştırın
+```
+flutter run
+```
+Yazdıktan sonra kullandığınız normalde kullandığınız emülatörü seçebilirsiniz.
 
-4. Firebase Yapılandırması (Önemli!)
+
+6. Firebase Yapılandırması (Önemli!)
 
 Bu proje Firebase servislerini kullandığı için google-services.json dosyasına ihtiyaç duyar.
 
@@ -49,7 +55,7 @@ Proje Ayarları'ndan bir Android Uygulaması ekleyin. Paket adı olarak android/
 
 İndirdiğiniz google-services.json dosyasını projenin android/app/ klasörünün içine yapıştırın.
 
-5. Uygulamayı Çalıştırın
+6. Uygulamayı Çalıştırın
 
 Emülatörünüzü veya fiziksel cihazınızı bağladıktan sonra aşağıdaki komutla uygulamayı başlatın:
 
@@ -70,9 +76,3 @@ lib/
 │   └── profile_screen.dart
 └── widgets/            # Ortak kullanılan bileşenler
 ```
-
-⚠️ Karşılaşılabilecek Sorunlar ve Çözümleri
-
-İstatistik Ekranı Açılmıyor: Terminalde çıkan mavi Firebase linkine tıklayarak Firestore İndeks'ini oluşturmanız gerekir.
-
-Klavye Sorunu (Örn: i yerine ı): Emülatör ayarlarından fiziksel klavyeyi devre dışı bırakın veya main.dart içindeki Localization ayarlarının yüklendiğinden emin olun.
