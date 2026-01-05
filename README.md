@@ -6,11 +6,10 @@ Bu projeyi yerel makinenizde çalıştırmak için aşağıdaki adımları izley
 
 1. Gereksinimler
 
-Flutter SDK (3.0.0 veya üzeri)
-
-Dart SDK
-
-Bir IDE (VS Code veya Android Studio)
+* **Flutter SDK:** 3.0.0 veya üzeri
+* **Dart SDK**
+* **IDE:** VS Code veya Android Studio
+* **Cihaz:** Android Emülatör veya Fiziksel Cihaz
 
 Android Emülatör veya Fiziksel Cihaz
 
