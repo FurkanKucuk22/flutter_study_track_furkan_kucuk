@@ -20,7 +20,6 @@ class DBService {
     });
   }
 
-  // GÜNCELLEME: Bölüm ve Sınıf parametreleri geri eklendi
   Future<void> updateUserProfile(String userId, String name, String department, String grade) async {
     await _db.collection('users').doc(userId).set({
       'name': name,
@@ -29,7 +28,7 @@ class DBService {
     }, SetOptions(merge: true));
   }
 
-  // --- FOTOĞRAF YÜKLEME (Base64) ---
+  // --- FOTOĞRAF YÜKLEME ---
   Future<void> uploadProfilePhoto(String userId, File imageFile) async {
     try {
       List<int> imageBytes = await imageFile.readAsBytes();
@@ -51,13 +50,19 @@ class DBService {
     });
   }
 
+  // --- GÜNCELLEME: Listeyi Tarihe Göre Sıralıyoruz ---
   Stream<List<StudySession>> getTodaySessions(String userId) {
     String today = DateTime.now().toString().substring(0, 10);
     return _db.collection('study_sessions')
         .where('userId', isEqualTo: userId)
         .where('dateStr', isEqualTo: today)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => StudySession.fromFirestore(doc)).toList());
+        .map((snapshot) {
+      var sessions = snapshot.docs.map((doc) => StudySession.fromFirestore(doc)).toList();
+      // Tarihe göre yeniden eskiye (b > a) sırala
+      sessions.sort((a, b) => b.date.compareTo(a.date));
+      return sessions;
+    });
   }
 
   Stream<List<StudySession>> getWeeklySessions(String userId) {
