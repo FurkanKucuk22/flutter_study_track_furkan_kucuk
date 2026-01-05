@@ -55,7 +55,8 @@ lib/
 │ │ ├── community_screen.dart
 │ │ ├── dashboard_screen.dart
 │ │ ├── stats_screen.dart
-│ │ └── timer_screen.dart
+│ │ ├── timer_screen.dart
+│ │ └── goal_setting_screen.dart
 │ └── profile_screen.dart
 ├── services/ # Firebase işlemleri
 │ ├── auth_service.dart
