@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "966920542268",
+    "project_id": "studytrack-f8f02",
+    "storage_bucket": "studytrack-f8f02.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966920542268:android:71e4ebf33fec09bece8b39",
+        "android_client_info": {
+          "package_name": "com.example.flutter_study_track_furkan_kucuk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgxo6NNxNeriBRvle-CyngjAFTBGQU8Xk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
