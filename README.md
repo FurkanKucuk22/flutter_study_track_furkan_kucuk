@@ -18,15 +18,18 @@ Android Emülatör veya Fiziksel Cihaz
 
 Terminali açın ve projeyi bilgisayarınıza indirin:
 
+```
 git clone flutter_study_track_furkan_kucuk
 cd studytrack
+```
 
 3. Bağımlılıkları Yükleyin
 
 Projenin ihtiyaç duyduğu paketleri indirmek için proje dizininde şu komutu çalıştırın:
 
+```
 flutter pub get
-
+```
 
 4. Firebase Yapılandırması (Önemli!)
 
@@ -38,7 +41,9 @@ Authentication servisini başlatın ve "Email/Password" yöntemini etkinleştiri
 
 Cloud Firestore veritabanını oluşturun (Production mode önerilir) ve Kurallar (Rules) sekmesinden okuma/yazma izni verin:
 
+```
 allow read, write: if request.auth != null;
+```
 
 
 Proje Ayarları'ndan bir Android Uygulaması ekleyin. Paket adı olarak android/app/build.gradle içindeki applicationId'yi kullanın (Örn: com.example.studytrack).
@@ -49,7 +54,9 @@ Proje Ayarları'ndan bir Android Uygulaması ekleyin. Paket adı olarak android/
 
 Emülatörünüzü veya fiziksel cihazınızı bağladıktan sonra aşağıdaki komutla uygulamayı başlatın:
 
+```
 flutter run
+```
 
 
 📂 Dosya Yapısı
