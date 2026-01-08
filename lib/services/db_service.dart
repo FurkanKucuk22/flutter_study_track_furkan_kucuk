@@ -138,7 +138,7 @@ class DBService {
         'createdAt': FieldValue.serverTimestamp(),
         'likes': 0,
         'likedBy': [],
-        'comments': [],
+        'comments': [], 
       });
     } catch (e) {
       print("Post atma hatası: $e");

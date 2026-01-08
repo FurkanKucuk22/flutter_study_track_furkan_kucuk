@@ -25,11 +25,65 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text.trim(),
     );
 
+    if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error), backgroundColor: Colors.red));
     }
+  }
+
+  // Şifre Sıfırlama Penceresini Açan Fonksiyon
+  void _showForgotPasswordDialog() {
+    final resetEmailController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Şifre Sıfırlama"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("E-posta adresinizi girin, size sıfırlama bağlantısı gönderelim."),
+            const SizedBox(height: 10),
+            TextField(
+              controller: resetEmailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(labelText: "E-Posta", prefixIcon: Icon(Icons.email)),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("İptal"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (resetEmailController.text.isEmpty) return;
+
+              Navigator.pop(ctx); // Pencereyi kapat
+
+              // Servisi çağır
+              final authService = Provider.of<AuthService>(context, listen: false);
+              String? error = await authService.sendPasswordResetEmail(resetEmailController.text.trim());
+
+              if (mounted) {
+                if (error == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Sıfırlama e-postası gönderildi! Lütfen kutunuzu kontrol edin."), backgroundColor: Colors.green)
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(error), backgroundColor: Colors.red)
+                  );
+                }
+              }
+            },
+            child: const Text("Gönder"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -48,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
             TextField(
               controller: _emailController,
               decoration: const InputDecoration(labelText: "E-Posta", prefixIcon: Icon(Icons.email)),
+              keyboardType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 16),
             TextField(
@@ -55,8 +110,19 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: const InputDecoration(labelText: "Şifre", prefixIcon: Icon(Icons.lock)),
               obscureText: true,
             ),
-            const SizedBox(height: 24),
+
+            // Şifremi Unuttum Butonu (Sağa Yaslı)
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: _showForgotPasswordDialog,
+                child: const Text("Şifremi Unuttum?"),
+              ),
+            ),
+
+            const SizedBox(height: 10),
             CustomButton(text: "GİRİŞ YAP", onPressed: _login, isLoading: _isLoading),
+            const SizedBox(height: 20),
             TextButton(
               onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RegisterScreen())),
               child: const Text("Hesabın yok mu? Kayıt Ol"),
