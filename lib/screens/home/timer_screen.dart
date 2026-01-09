@@ -196,7 +196,6 @@ class _TimerScreenState extends State<TimerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Hedef bilgisini ekranda göstermek için metin hazırla
     String targetText = _currentTargetSeconds > 0
         ? "Hedef: ${(_currentTargetSeconds / 60).toStringAsFixed(0)} dk"
         : "Hedef yok";
@@ -205,7 +204,6 @@ class _TimerScreenState extends State<TimerScreen> {
       appBar: AppBar(
         title: const Text("Zamanlayıcı"),
         actions: [
-          // Manuel Ekleme Butonu
           TextButton.icon(
             onPressed: _showManualEntryDialog,
             icon: const Icon(Icons.edit_note),
@@ -223,7 +221,6 @@ class _TimerScreenState extends State<TimerScreen> {
             const Text("Hangi derse çalışıyorsun?", style: TextStyle(color: Colors.grey, fontSize: 16)),
             const SizedBox(height: 10),
 
-            // Ders Seçimi
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
@@ -239,14 +236,13 @@ class _TimerScreenState extends State<TimerScreen> {
                   onChanged: _isActive ? null : (val) {
                     setState(() {
                       _selectedSubject = val!;
-                      _updateCurrentTarget(); // Ders değişince yeni hedefe bak
+                      _updateCurrentTarget();
                     });
                   },
                 ),
               ),
             ),
 
-            // Hedef Bilgisi (Varsa göster)
             if (_currentTargetSeconds > 0)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -258,7 +254,6 @@ class _TimerScreenState extends State<TimerScreen> {
 
             const Spacer(),
 
-            // Sayaç Göstergesi
             Text(
                 _formatTime(_seconds),
                 style: const TextStyle(
@@ -275,12 +270,12 @@ class _TimerScreenState extends State<TimerScreen> {
 
             const Spacer(),
 
-            // Kontrol Butonları
+            // --- GÜNCELLENEN BUTON MANTIĞI ---
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // BAŞLAT
-                if (!_isActive && _seconds == 0)
+                // DURUM 1: HİÇ BAŞLAMADI (0 sn)
+                if (_seconds == 0)
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _startTimer,
@@ -291,10 +286,10 @@ class _TimerScreenState extends State<TimerScreen> {
                       ),
                       child: const Text("BAŞLAT", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
                     ),
-                  ),
+                  )
 
-                if (_isActive || (_seconds > 0 && !_isActive)) ...[
-                  // BİTİR & KAYDET
+                // DURUM 2: ÇALIŞIYOR (Aktif)
+                else if (_isActive) ...[
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () => _stopAndSave(autoStop: false),
@@ -307,21 +302,47 @@ class _TimerScreenState extends State<TimerScreen> {
                     ),
                   ),
                   const SizedBox(width: 15),
+                  InkWell(
+                    onTap: () {
+                      _timer?.cancel();
+                      setState(() => _isActive = false);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(color: Colors.orange.shade100, borderRadius: BorderRadius.circular(15)),
+                      child: const Icon(Icons.pause, color: Colors.orange, size: 30),
+                    ),
+                  )
+                ]
 
-                  // SIFIRLA / DURAKLAT
-                  if (_isActive)
+                // DURUM 3: DURAKLATILDI (Süre var ama aktif değil)
+                else ...[
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton(
+                        onPressed: () => _stopAndSave(autoStop: false),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.indigo,
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))
+                        ),
+                        child: const Text("BİTİR & KAYDET", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+
+                    // DEVAM ET (PLAY) BUTONU
                     InkWell(
-                      onTap: () {
-                        _timer?.cancel();
-                        setState(() => _isActive = false);
-                      },
+                      onTap: _startTimer,
                       child: Container(
                         padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(color: Colors.orange.shade100, borderRadius: BorderRadius.circular(15)),
-                        child: const Icon(Icons.pause, color: Colors.orange, size: 30),
+                        decoration: BoxDecoration(color: Colors.green.shade100, borderRadius: BorderRadius.circular(15)),
+                        child: const Icon(Icons.play_arrow, color: Colors.green, size: 30),
                       ),
-                    )
-                  else
+                    ),
+                    const SizedBox(width: 10),
+
+                    // SIFIRLA (REFRESH) BUTONU
                     InkWell(
                       onTap: _resetTimer,
                       child: Container(
@@ -330,7 +351,7 @@ class _TimerScreenState extends State<TimerScreen> {
                         child: const Icon(Icons.refresh, color: Colors.red, size: 30),
                       ),
                     ),
-                ]
+                  ]
               ],
             ),
             const SizedBox(height: 20),
