@@ -104,7 +104,6 @@ class _GoalSettingScreenState extends State<GoalSettingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Hedef Belirle"),
-        automaticallyImplyLeading: false, // Geri butonunu gizler
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
